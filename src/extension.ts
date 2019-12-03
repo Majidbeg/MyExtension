@@ -6,6 +6,7 @@ var inActiveTime: Date;
 var activeTime: Date;
 var userName = require("git-user-name");
 var url = "http://localhost:3600";
+
 export function activate(context: vscode.ExtensionContext) {
 
 	vscode.commands.executeCommand('extension.helloWorld');
