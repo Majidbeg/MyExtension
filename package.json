@@ -2,7 +2,7 @@
 	"name": "gitswirl",
 	"displayName": "gitswirltest",
 	"description": "this is the gitswirl extension",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
