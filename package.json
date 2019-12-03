@@ -1,8 +1,8 @@
 {
 	"name": "gitswirl",
-	"displayName": "gitswirl",
-	"description": "this is hte gitswirl extension",
-	"version": "0.0.1",
+	"displayName": "gitswirltest",
+	"description": "this is the gitswirl extension",
+	"version": "1.0.5",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

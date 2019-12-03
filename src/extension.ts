@@ -6,8 +6,6 @@ var inActiveTime: Date;
 var activeTime: Date;
 var userName = require("git-user-name");
 var url = "http://localhost:3600";
-
-
 export function activate(context: vscode.ExtensionContext) {
 
 	vscode.commands.executeCommand('extension.helloWorld');
@@ -20,6 +18,39 @@ export function activate(context: vscode.ExtensionContext) {
 	let folderPath = vscode.workspace.rootPath;
 
 	let disposable = vscode.commands.registerCommand('extension.helloWorld', () => { 
+
+		vscode.workspace.onDidChangeTextDocument(item => {
+			vscode.window.showInformationMessage("branch name");
+			if (folderPath) {
+				branch(`${folderPath}`)
+				  .then((branchName: String) => {
+					repoName(folderPath, function(err: String, repoName: String) {
+					  vscode.window.setStatusBarMessage(
+						"GitSwirl:=> "+" [Username]:=> "+  
+						swirlUser +
+						" [Repository]:=> " +
+						repoName +
+						" [Branch]:=> " +
+						branchName
+					  );
+					  console.log(repoName, "reponame", branchName, "branchName");
+					  axios
+					  .post(url + "/vscode_extension", {
+						branchName,
+						repoName,
+						swirlUser
+					  })
+					  .then(response => {
+						console.log(response, "this is response");
+					  });
+	
+					});
+				  })
+				  .catch(console.error);
+			  } else {
+				console.log("Add repo name...");
+			  }	
+		});
 
 		if (folderPath) {
 			branch(`${folderPath}`)
@@ -55,7 +86,6 @@ export function activate(context: vscode.ExtensionContext) {
 		if (item.focused === true) {
 		  let inFocus: Date = new Date();
 		  activeTime = inFocus;
-		  console.log(inFocus, "this is focus time");
 		  axios
 			.post(url + "/vscode_extension", {
 			  inActiveTime
