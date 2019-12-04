@@ -7,12 +7,13 @@ var activeTime: Date;
 var userName = require("git-user-name");
 var url = "http://localhost:3600";
 
+var newBranchName:any;
+var newRepoName:any;
+var swirlUser: String = userName();
 export function activate(context: vscode.ExtensionContext) {
-
+ 
 	vscode.commands.executeCommand('extension.helloWorld');
 
-	var swirlUser: String = userName();
-	
 
 	/**
 	 * Finding the repository and branch name
@@ -21,112 +22,71 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let disposable = vscode.commands.registerCommand('extension.helloWorld', () => { 
 
+
 		vscode.workspace.onDidChangeTextDocument(item => {
-			vscode.window.showInformationMessage("branch name");
+			vscode.window.showInformationMessage("branch name");  
 			if (folderPath) {
 				branch(`${folderPath}`)
 				  .then((branchName: String) => {
 					repoName(folderPath, function(err: String, repoName: String) {
 					  vscode.window.setStatusBarMessage(
-						"GitSwirl:=> "+" [Username]:=> "+  
+						"GitSwirl:=> "+'$(person-filled) '+      
 						swirlUser +
-						" [Repository]:=> " +
+						' $(repo) ' +  
 						repoName +
-						" [Branch]:=> " +
-						branchName
+						' $(git-branch) ' +
+						branchName  
 					  );
-					  console.log(repoName, "reponame", branchName, "branchName");
+					  console.log(repoName, "reponame", branchName, "branchName"); 
+					  newBranchName = branchName;
+					  newRepoName = repoName;
 					  axios
 					  .post(url + "/vscode_extension", {
-						branchName,
-						repoName,
+						newBranchName,
+						newRepoName,
 						swirlUser
 					  })
 					  .then(response => {
 						console.log(response, "this is response");
-					  });
+					  });    
 	
-					});
+					});    
 				  })
-				  .catch(console.error);
-			  } else {
+				  .catch(console.error); 
+			  } else { 
 				console.log("Add repo name...");
 			  }	
 		});
-
-		if (folderPath) {
-			branch(`${folderPath}`)
-			  .then((branchName: String) => {
-				repoName(folderPath, function(err: String, repoName: String) {
-				  vscode.window.setStatusBarMessage(
-					"GitSwirl:=> "+" [Username]:=> "+  
-					swirlUser +
-					" [Repository]:=> " +
-					repoName +
-					" [Branch]:=> " +
-					branchName
-				  );
-				  console.log(repoName, "reponame", branchName, "branchName");
-				  axios
-				  .post(url + "/vscode_extension", {
-					branchName,
-					repoName,
-					swirlUser
-				  })
-				  .then(response => {
-					console.log(response, "this is response");
-				  });
-
-				});
-			  })
-			  .catch(console.error);
-		  } else {
-			console.log("Add repo name...");
-		  }
-	
 		vscode.window.onDidChangeWindowState(item => {
-
 		if (item.focused === true) {
 		  let inFocus: Date = new Date();
 		  activeTime = inFocus;
-		  console.log(activeTime);
-		  repoName(folderPath, function(err: String, repoName: String) {
-			  console.log(repoName,"THis is the repo namee");
-			  branch(folderPath, function(err: String, branchName: String) {
-				console.log(branchName,"THis is the branch namee");
 				axios
 				  .post(url + "/vscode_extension", {
 					inActiveTime,
-					branchName,
-					repoName
+					newBranchName,
+					newRepoName,
+					swirlUser
 				  })
-				  .then(response => {
+				  .then(response => {     
 					console.log(response);
 				  }).catch(console.error);
-			});
-		  });
 
-		 } else if (item.focused === false) {
-		  let outOfFocus: Date = new Date();
-		  repoName(folderPath, function(err: String, repoName: String) {
-			console.log(repoName,"THis is the repo namee");
-			branch(folderPath, function(err: String, branchName: String) {
-			  console.log(branchName,"THis is the branch namee");
-			  
+		 } else if (item.focused === false) { 
+		  let outOfFocus: Date = new Date();	  
 			  axios
 				.post(url + "/vscode_extension", {
 				  activeTime,
-				  branchName,
-				  repoName
+				  newBranchName,
+				  newRepoName,
+				  swirlUser
 				})
 				.then(response => {
 				  console.log(response);
 				}).catch(console.error);
 			  inActiveTime = outOfFocus;
-		  });
-		});
 		}
-
+		
 	});
 });                
 
@@ -134,4 +94,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {}   
